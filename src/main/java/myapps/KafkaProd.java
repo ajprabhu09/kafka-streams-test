@@ -34,7 +34,8 @@ public class KafkaProd {
             Map<String, Object> x = new HashMap<>();
             x.put("dataset", "asdasd"+String.valueOf(i) );
             x.put("namespace", "asdasd"+String.valueOf(i) );
-            x.put("other", new HashMap<String, String>());
+            if (i%2 == 0)
+                x.put("other", new HashMap<String, String>());
 
             producer.send(new ProducerRecord<String, Map<String, Object>>("quickstart-events", String.valueOf(i),x));
             Thread.sleep(1000);

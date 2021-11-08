@@ -23,6 +23,7 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KStream;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
@@ -45,7 +46,12 @@ public class KafkaLog {
         final StreamsBuilder builder = new StreamsBuilder();
 
         KStream<String, Map<String, Object>> stream = builder.stream("quickstart-events");
-        stream.groupBy((key, value) -> value.get("dataset")).t
+        stream.groupBy((key, value) -> value.get("dataset")).reduce((value1, value2) -> {
+            Map<String, Object> x = new HashMap<>();
+            x.putAll(value1);
+            x.putAll(value2);
+            return x;
+        }).toStream().foreach((key, value) -> System.out.println(value));
 
 
         final Topology topology = builder.build();
