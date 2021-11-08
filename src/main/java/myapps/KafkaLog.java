@@ -42,6 +42,7 @@ public class KafkaLog {
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put("value.deserializer", "myapps.DatasetDeSerializer");
+        props.put("value.serializer", "myapps.DatasetSerializer");
 
         final StreamsBuilder builder = new StreamsBuilder();
 
@@ -50,8 +51,9 @@ public class KafkaLog {
             Map<String, Object> x = new HashMap<>();
             x.putAll(value1);
             x.putAll(value2);
+            System.out.println("sent");
             return x;
-        }).toStream().foreach((key, value) -> System.out.println(value));
+        }).toStream().to("change_log");
 
 
         final Topology topology = builder.build();
